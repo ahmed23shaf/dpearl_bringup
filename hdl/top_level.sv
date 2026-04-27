@@ -19,8 +19,8 @@ module top_level (
     output logic        chip_rst_n,
 
     output io_in_t      chip_pkt_i,
-    output logic        chip_rx_enqueue,
-    output logic        chip_tx_dequeue,
+    output logic        chip_fifo_rx_enqueue,
+    output logic        chip_fifo_tx_dequeue,
 
     // Chip --> FPGA
     input  logic                chip_fifo_rx_full,
@@ -42,8 +42,8 @@ module top_level (
     logic       rst_n_sync;
     // ==== FPGA internal signals ====
     io_in_t     FPGA_pkt_i;
-    logic       FPGA_rx_enqueue;
-    logic       FPGA_tx_dequeue;
+    logic       FPGA_fifo_rx_enqueue;
+    logic       FPGA_fifo_tx_dequeue;
     
     logic       FPGA_fifo_rx_full;
     logic       FPGA_fifo_tx_empty;
@@ -89,8 +89,8 @@ module top_level (
         .chip_rst_n(chip_rst_n),
     
         .chip_pkt_i(chip_pkt_i),
-        .chip_rx_enqueue(chip_rx_enqueue),
-        .chip_tx_dequeue(chip_tx_dequeue),
+        .chip_fifo_rx_enqueue(chip_fifo_rx_enqueue),
+        .chip_fifo_tx_dequeue(chip_fifo_tx_dequeue),
     
         // Chip --> FPGA
         .chip_fifo_rx_full(chip_fifo_rx_full),
@@ -106,8 +106,8 @@ module top_level (
         .FPGA_clk(clk),
         .FPGA_rst_n(~rst_sync),
         .FPGA_pkt_i(FPGA_pkt_i),
-        .FPGA_rx_enqueue(FPGA_rx_enqueue),
-        .FPGA_tx_dequeue(FPGA_tx_dequeue),
+        .FPGA_fifo_rx_enqueue(FPGA_fifo_rx_enqueue),
+        .FPGA_fifo_tx_dequeue(FPGA_fifo_tx_dequeue),
         
         .FPGA_fifo_rx_full(FPGA_fifo_rx_full),
         .FPGA_fifo_tx_empty(FPGA_fifo_tx_empty),
@@ -125,7 +125,8 @@ module top_level (
         .ctrl(FPGA_reg_o),
         .fifo_rx_full(FPGA_fifo_rx_full),
         .fifo_tx_empty(FPGA_fifo_tx_empty),
-        .power_test(FPGA_power_test_o)
+        .power_test(FPGA_power_test_o),
+        .LED(BOARD_LED)
     );
     
     // Controller
