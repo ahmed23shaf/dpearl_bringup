@@ -1,4 +1,5 @@
 import rl_types::*;
+import io_convert::*;
 
 module fpga_top (
     input  logic        clk125_p,          // AY24
