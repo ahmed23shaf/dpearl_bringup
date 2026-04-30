@@ -1,43 +1,49 @@
-#    // CLOCK signal
-#    input  logic        clk125_p,          // AY24
-#    input  logic        clk125_n,          // AY23
+# module top_level (
+#     // CLOCK signal
+#     input  logic        clk125_p,          
+#     input  logic        clk125_n,          
     
-#    // Board signal
-#    input  logic        BOARD_reset,             // L19 -- ACTIVE HIGH
-#    input  logic        BOARD_LED_button,
-#    output logic [7:0]  BOARD_LED,
+#     // Board signal
+#     input  logic        BOARD_reset,             
+#     input  logic        BOARD_LED_button,
+#     input  logic        BOARD_step_button,
+#     output logic [7:0]  BOARD_LED,
     
-#    // TX RX UART signal
-#    input  logic        UART_TX,
-#    output logic        UART_RX,
+#     // TX RX UART signal
+#     // input  logic        UART_TX,
+#     // output logic        UART_RX,
     
-#    // FPGA --> Chip
-#    output logic        chip_clk,
-#    output logic        chip_rst_n,
+#     // FPGA --> Chip
+#     output logic        chip_clk,
+#     output logic        chip_rst_n,
 
-#    output io_in_t      chip_pkt_i,
-#    output logic        chip_fifo_rx_enqueue,
-#    output logic        chip_fifo_tx_dequeue,
+#     output io_in_t      chip_pkt_i,
+#     output logic        chip_fifo_rx_enqueue,
+#     output logic        chip_fifo_tx_dequeue,
 
-#    // Chip --> FPGA
-#    input  logic                chip_fifo_rx_full,
-#    input  logic                chip_fifo_tx_empty,
+#     // Chip --> FPGA
+#     input  logic                chip_fifo_rx_full,
+#     input  logic                chip_fifo_tx_empty,
 
-#    input  io_out_t             chip_pkt_o,        // From chip pkt_o
-#    input  logic                chip_pkt_o_valid,  // From chip pkt_o_valid
+#     input  io_out_t             chip_pkt_o,        
+#     input  logic                chip_pkt_o_valid,  
     
-#    input  ctrl_status_reg_t    chip_reg_o,
-#    input  logic                chip_power_test_o
+#     input  ctrl_status_reg_t    chip_reg_o,
+#     input  logic                chip_power_test_o
+
+    
+# );
 
 
 # Clock
 set_property PACKAGE_PIN AY24 [get_ports clk125_p]
 set_property PACKAGE_PIN AY23 [get_ports clk125_n]
-set_property IOSTANDARD LVDS [get_ports {clk125p clk125_n}]
+set_property IOSTANDARD LVDS [get_ports {clk125_p clk125_n}]
 
 # Board reset
-set_property PACKAGE_PIN BD23 [get_ports BOARD_reset] # user button center
-set_property IOSTANDARD LVCMOS18 [get_ports BOARD_reset]
+# Use the dedicated VCU118 CPU reset pushbutton as the design reset input.
+set_property PACKAGE_PIN L19 [get_ports BOARD_reset] # CPU reset pushbutton
+set_property IOSTANDARD LVCMOS12 [get_ports BOARD_reset]
 
 # Board LED
 set_property PACKAGE_PIN AT32 [get_ports {BOARD_LED[0]}]
@@ -52,8 +58,12 @@ set_property PACKAGE_PIN BA37 [get_ports {BOARD_LED[7]}]
 set_property IOSTANDARD LVCMOS12 [get_ports BOARD_LED[*]]
 
 # LED page switch button
-set_property PACKAGE_PIN BF32 [get_ports BOARD_LED_button] # user button west 
+set_property PACKAGE_PIN BF22 [get_ports BOARD_LED_button] # user button west 
 set_property IOSTANDARD LVCMOS18 [get_ports BOARD_LED_button]
+
+# Test Controller step button
+set_property PACKAGE_PIN BE23 [get_ports BOARD_step_button] # user button east
+set_property IOSTANDARD LVCMOS18 [get_ports BOARD_step_button]
 
 # FPGA <--> CHIP
 set_property PACKAGE_PIN AY9 [get_ports chip_clk] # FPGA: FMC_HPC1_LA00_CC_P, FMC: J1_1

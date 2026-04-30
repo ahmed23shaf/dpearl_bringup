@@ -2,17 +2,18 @@ import rl_types::*;
 
 module top_level (
     // CLOCK signal
-    input  logic        clk125_p,          // AY24
-    input  logic        clk125_n,          // AY23
+    input  logic        clk125_p,          
+    input  logic        clk125_n,          
     
     // Board signal
-    input  logic        BOARD_reset,             // L19 -- ACTIVE HIGH
+    input  logic        BOARD_reset,             
     input  logic        BOARD_LED_button,
+    input  logic        BOARD_step_button,
     output logic [7:0]  BOARD_LED,
     
     // TX RX UART signal
-    input  logic        UART_TX,
-    output logic        UART_RX,
+    // input  logic        UART_TX,
+    // output logic        UART_RX,
     
     // FPGA --> Chip
     output logic        chip_clk,
@@ -26,8 +27,8 @@ module top_level (
     input  logic                chip_fifo_rx_full,
     input  logic                chip_fifo_tx_empty,
 
-    input  io_out_t             chip_pkt_o,        // From chip pkt_o
-    input  logic                chip_pkt_o_valid,  // From chip pkt_o_valid
+    input  io_out_t             chip_pkt_o,        
+    input  logic                chip_pkt_o_valid,  
     
     input  ctrl_status_reg_t    chip_reg_o,
     input  logic                chip_power_test_o
@@ -36,24 +37,33 @@ module top_level (
 );
     
     // ==== Clocking & Reset ====
-    logic       clk;
-    logic       clk_locked;
-    logic       rst_sync;
-    logic       rst_n_sync;
+    logic               clk;
+    logic               clk_locked;
+    logic               rst_sync;
+    logic               rst_n_sync;
     // ==== FPGA internal signals ====
-    io_in_t     FPGA_pkt_i;
-    logic       FPGA_fifo_rx_enqueue;
-    logic       FPGA_fifo_tx_dequeue;
+    io_in_t             FPGA_pkt_i;
+    logic               FPGA_fifo_rx_enqueue;
+    logic               FPGA_fifo_tx_dequeue;
     
-    logic       FPGA_fifo_rx_full;
-    logic       FPGA_fifo_tx_empty;
-    io_out_t    FPGA_pkt_o;
-    logic       FPGA_pkt_o_valid;
-    logic       FPGA_reg_o;
-    logic       FPGA_power_test_o;
+    logic               FPGA_fifo_rx_full;
+    logic               FPGA_fifo_tx_empty;
+    io_out_t            FPGA_pkt_o;
+    logic               FPGA_pkt_o_valid;
+    ctrl_status_reg_t   FPGA_reg_o;
+    logic               FPGA_power_test_o;
+    // ==== Test Controller Signals ====
+    logic               test_done;
+    logic               test_pass;
+    logic               dist_done;
+    logic               dist_pass;
+    logic               tb_done;
+    logic               tb_pass;
+    logic [5:0]         testctrl_state;
+    logic               step_advance;
 
     // ==== LED controller ====
-    logic       led_page_switch;
+    logic               led_page_switch;
     
     // Reset button debouncer
     sync_debounce u_debouncer_rst (
@@ -71,6 +81,15 @@ module top_level (
         .mode_sel(1'b1),
         .d(BOARD_LED_button & clk_locked),// Ensure led_page_switch generated when clock is stable
         .q(led_page_switch)
+    );
+
+    // Step button debouncer. In button mode, sync_debounce returns a clean
+    // 1-cycle pulse on each debounced rising edge.
+    sync_debounce u_debouncer_step (
+        .clk(clk),
+        .mode_sel(1'b1),
+        .d(BOARD_step_button & clk_locked),
+        .q(step_advance)
     );
 
     // Differential --> Single ended clock generator
@@ -126,11 +145,37 @@ module top_level (
         .fifo_rx_full(FPGA_fifo_rx_full),
         .fifo_tx_empty(FPGA_fifo_tx_empty),
         .power_test(FPGA_power_test_o),
+        .testctrl_state(testctrl_state),
+        .test_done(test_done),
+        .test_pass(test_pass),
+        .dist_done(dist_done),
+        .dist_pass(dist_pass),
+        .tb_done(tb_done),
+        .tb_pass(tb_pass),
         .LED(BOARD_LED)
     );
     
     // Controller
-    
-    
+    test_controller u_test_controller (
+        .clk(clk),
+        .rst_n(rst_n_sync),
+        .step_advance(step_advance),
+        .pkt_i(FPGA_pkt_i),
+        .fifo_rx_enqueue(FPGA_fifo_rx_enqueue),
+        .fifo_tx_dequeue(FPGA_fifo_tx_dequeue),
+        .fifo_rx_full(FPGA_fifo_rx_full),
+        .fifo_tx_empty(FPGA_fifo_tx_empty),
+        .pkt_o(FPGA_pkt_o),
+        .pkt_o_valid(FPGA_pkt_o_valid),
+        .reg_o(FPGA_reg_o),
+        .power_test_o(FPGA_power_test_o),
+        .test_done(test_done),
+        .test_pass(test_pass),
+        .dist_done(dist_done),
+        .dist_pass(dist_pass),
+        .tb_done(tb_done),
+        .tb_pass(tb_pass),
+        .testctrl_state(testctrl_state)
+    );
 
 endmodule : top_level

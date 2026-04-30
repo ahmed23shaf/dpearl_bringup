@@ -41,11 +41,13 @@ module sync_debounce (
 
 	button_pulse u_button_pulse (
 		.clk(clk),
-		.level_in(d),
+		.level_in(debounce_out),
 		.pulse_out(pulse_out)
 	);
 
-	assign q = mode_sel ? debounce_out : pulse_out;
+	// mode_sel = 0 => switch mode, return debounced level
+	// mode_sel = 1 => button mode, return 1-cycle pulse on debounced rising edge
+	assign q = mode_sel ? pulse_out : debounce_out;
 
 endmodule
 

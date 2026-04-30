@@ -11,28 +11,28 @@ module ASIC_io_reg(
     output  logic        chip_fifo_tx_dequeue,
 
     // Chip --> FPGA
-    input   logic                chip_fifo_rx_full,
-    input   logic                chip_fifo_tx_empty,
+    input   logic               chip_fifo_rx_full,
+    input   logic               chip_fifo_tx_empty,
 
-    input   io_out_t             chip_pkt_o,        
-    input   logic                chip_pkt_o_valid,  
+    input   io_out_t            chip_pkt_o,        
+    input   logic               chip_pkt_o_valid,  
     
-    input   ctrl_status_reg_t    chip_reg_o,
-    input   logic                chip_power_test_o,
+    input   ctrl_status_reg_t   chip_reg_o,
+    input   logic               chip_power_test_o,
     
     // Internal signal
-    input   logic       FPGA_clk,
-    input   logic       FPGA_rst_n,
-    input   io_in_t     FPGA_pkt_i,
-    input   logic       FPGA_fifo_rx_enqueue,
-    input   logic       FPGA_fifo_tx_dequeue,
+    input   logic               FPGA_clk,
+    input   logic               FPGA_rst_n,
+    input   io_in_t             FPGA_pkt_i,
+    input   logic               FPGA_fifo_rx_enqueue,
+    input   logic               FPGA_fifo_tx_dequeue,
     
-    output  logic       FPGA_fifo_rx_full,
-    output  logic       FPGA_fifo_tx_empty,
-    output  io_out_t    FPGA_pkt_o,
-    output  logic       FPGA_pkt_o_valid,
-    output  logic       FPGA_reg_o,
-    output  logic       FPGA_power_test_o
+    output  logic               FPGA_fifo_rx_full,
+    output  logic               FPGA_fifo_tx_empty,
+    output  io_out_t            FPGA_pkt_o,
+    output  logic               FPGA_pkt_o_valid,
+    output  ctrl_status_reg_t   FPGA_reg_o,
+    output  logic               FPGA_power_test_o
 
     );
     

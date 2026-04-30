@@ -136,6 +136,7 @@ package rl_types;
         logic   error; 
     } ctrl_status_reg_t;
 
+
     localparam OPCODE_WIDTH  = $bits(control_unit_opcode_e);
     localparam IN_PKT_WIDTH  = 14;  // chosen to fit minimum needs
     localparam OUT_PKT_WIDTH = 13;

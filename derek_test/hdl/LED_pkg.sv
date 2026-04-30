@@ -20,7 +20,8 @@ package LED_pkg;
     typedef union packed {
         // MODE PAGE
         struct packed {
-            logic [LED_DATA_WIDTH-2-1:0] pad; // 4 bits
+            logic [LED_DATA_WIDTH-3-1:0] pad; // 3 bits
+            logic power_test;
             logic tb_en;
             logic stream_mode;
         } mode;
@@ -35,17 +36,17 @@ package LED_pkg;
             logic result_ready;
         } status;
 
-        // FIFO PAGE
-        struct packed {
-            logic [LED_DATA_WIDTH-2-1:0] pad; // 4 bits
-            logic fifo_rx_full;
-            logic fifo_tx_empty;
-        } fifo;
+        // TEST CONTROLLER PAGE
+        logic [LED_DATA_WIDTH-1:0] testctrl_state;
 
         // POWER PAGE
         struct packed {
-            logic [LED_DATA_WIDTH-1-1:0] pad; // 5 bits
-            logic power_test;
+            logic test_done;
+            logic test_pass;
+            logic dist_done;
+            logic dist_pass;
+            logic tb_done;
+            logic tb_pass;
         } power;
 
     } LED_status_t;

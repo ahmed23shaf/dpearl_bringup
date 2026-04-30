@@ -10,6 +10,13 @@ module LED_ctrl(
     input  logic             fifo_rx_full,
     input  logic             fifo_tx_empty,
     input  logic             power_test,
+    input  logic [5:0]       testctrl_state,
+    input  logic             test_done,
+    input  logic             test_pass,
+    input  logic             dist_done,
+    input  logic             dist_pass,
+    input  logic             tb_done,
+    input  logic             tb_pass,
     
     // output led
     output LED_t             LED
@@ -54,8 +61,15 @@ module LED_ctrl(
 
             // MODE PAGE
             LED_PAGE_MODE: begin
+                // MODE page now also carries a constant power-good bit.
+                // LED[7:6] = 2'b00 selects MODE page.
+                // LED[5:3] = unused
+                // LED[2]   = power_test
+                // LED[1]   = tb_en
+                // LED[0]   = stream_mode
                 LED_out.status.mode.tb_en       = ctrl.tb_en;
                 LED_out.status.mode.stream_mode = ctrl.stream_mode;
+                LED_out.status.mode.power_test  = power_test;
             end
 
             // STATUS PAGE
@@ -72,13 +86,30 @@ module LED_ctrl(
 
             // FIFO PAGE
             LED_PAGE_FIFO: begin
-                LED_out.status.fifo.fifo_rx_full  = fifo_rx_full;
-                LED_out.status.fifo.fifo_tx_empty = fifo_tx_empty;
+                // Temporary test-controller state page during bring-up.
+                // LED[7:6] = 2'b10 selects this page.
+                // LED[5:0] = current test_controller state enum value.
+                LED_out.status.testctrl_state = testctrl_state;
             end
 
             // POWER PAGE
             LED_PAGE_POWER: begin
-                LED_out.status.power.power_test = power_test;
+                // Temporary self-test summary page for the fixed BLOSUM vector.
+                // LED[7:6] = 2'b11 selects POWER page.
+                // LED[5]   = test_done  : distance and traceback comparisons both completed
+                // LED[4]   = test_pass  : overall pass (distance pass && traceback pass)
+                // LED[3]   = dist_done  : distance packet was received and checked
+                // LED[2]   = dist_pass  : distance matched the expected golden value
+                // LED[1]   = tb_done    : traceback stream was fully received and checked
+                // LED[0]   = tb_pass    : traceback stream matched the expected golden path
+                LED_out.status.power = '{
+                    test_done : test_done,
+                    test_pass : test_pass,
+                    dist_done : dist_done,
+                    dist_pass : dist_pass,
+                    tb_done   : tb_done,
+                    tb_pass   : tb_pass
+                };
             end
 
         endcase
