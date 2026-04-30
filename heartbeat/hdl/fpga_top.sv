@@ -19,20 +19,20 @@ module fpga_top (
     // -----------------------------
 
     // Chip --> FPGA
-    input  logic                chip_fifo_rx_full,
-    input  logic                chip_fifo_tx_empty,
+    input  logic        chip_fifo_rx_full,
+    input  logic        chip_fifo_tx_empty,
 
-    input  io_out_t             chip_pkt_o,        // From chip pkt_o
-    input  logic                chip_pkt_o_valid,  // From chip pkt_o_valid
+    input  logic [12:0] chip_pkt_o,        // From chip pkt_o
+    input  logic        chip_pkt_o_valid,  // From chip pkt_o_valid
     
-    input  ctrl_status_reg_t    chip_reg_o,
-    input  logic                chip_power_test_o,
+    input  logic [8:0]  chip_reg_o,
+    input  logic        chip_power_test_o,
 
     // FPGA --> Chip
     output logic        chip_clk,
     output logic        chip_rst_n,
 
-    output io_in_t      chip_pkt_i,
+    output logic [13:0] chip_pkt_i,
     output logic        chip_rx_enqueue,
     output logic        chip_tx_dequeue
 );
