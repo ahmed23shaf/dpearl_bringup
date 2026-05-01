@@ -69,15 +69,15 @@ set_property IOSTANDARD LVCMOS18 [get_ports BOARD_step_button]
 set_property PACKAGE_PIN AY9 [get_ports chip_clk]; # FPGA: FMC_HPC1_LA00_CC_P, FMC: J1_1
 set_property PACKAGE_PIN BA9 [get_ports chip_rst_n]; # FPGA: FMC_HPC1_LA00_CC_N, FMC: J1_3
 
-set_property PACKAGE_PIN BF10 [get_ports {chip_reg_o[0]}]; # FPGA: FMC_HPC_LA01_CC_P, FMC: J1_5
-set_property PACKAGE_PIN BF9  [get_ports {chip_reg_o[1]}]; # FPGA: FMC_HPC_LA01_CC_N, FMC: J1_7
-set_property PACKAGE_PIN BC11 [get_ports {chip_reg_o[2]}]; # FPGA: FMC_HPC_LA02_P,    FMC: J1_9
-set_property PACKAGE_PIN BD11 [get_ports {chip_reg_o[3]}]; # FPGA: FMC_HPC_LA02_N,    FMC: J1_11
-set_property PACKAGE_PIN BD12 [get_ports {chip_reg_o[4]}]; # FPGA: FMC_HPC_LA03_P,    FMC: J1_13
-set_property PACKAGE_PIN BE12 [get_ports {chip_reg_o[5]}]; # FPGA: FMC_HPC_LA03_N,    FMC: J1_15
+set_property PACKAGE_PIN BF10 [get_ports {chip_reg_o[4]}]; # FPGA: FMC_HPC_LA01_CC_P, FMC: J1_5
+set_property PACKAGE_PIN BF9  [get_ports {chip_reg_o[3]}]; # FPGA: FMC_HPC_LA01_CC_N, FMC: J1_7
+set_property PACKAGE_PIN BC11 [get_ports {chip_reg_o[1]}]; # FPGA: FMC_HPC_LA02_P,    FMC: J1_9
+set_property PACKAGE_PIN BD11 [get_ports {chip_reg_o[2]}]; # FPGA: FMC_HPC_LA02_N,    FMC: J1_11
+set_property PACKAGE_PIN BD12 [get_ports {chip_reg_o[8]}]; # FPGA: FMC_HPC_LA03_P,    FMC: J1_13
+set_property PACKAGE_PIN BE12 [get_ports {chip_reg_o[7]}]; # FPGA: FMC_HPC_LA03_N,    FMC: J1_15
 set_property PACKAGE_PIN BF12 [get_ports {chip_reg_o[6]}]; # FPGA: FMC_HPC_LA04_P,    FMC: J1_17
-set_property PACKAGE_PIN BF11 [get_ports {chip_reg_o[7]}]; # FPGA: FMC_HPC_LA04_N,    FMC: J1_19
-set_property PACKAGE_PIN BE14 [get_ports {chip_reg_o[8]}]; # FPGA: FMC_HPC_LA05_P,    FMC: J1_21
+set_property PACKAGE_PIN BF11 [get_ports {chip_reg_o[5]}]; # FPGA: FMC_HPC_LA04_N,    FMC: J1_19
+set_property PACKAGE_PIN BE14 [get_ports {chip_reg_o[0]}]; # FPGA: FMC_HPC_LA05_P,    FMC: J1_21
 
 set_property PACKAGE_PIN BB13 [get_ports {chip_pkt_o[0]}];  # FPGA: FMC_HPC_LA10_P, FMC: J1_2
 set_property PACKAGE_PIN BB12 [get_ports {chip_pkt_o[1]}];  # FPGA: FMC_HPC_LA10_N, FMC: J1_4
