@@ -33,6 +33,11 @@ module fpga_top (
     output logic        chip_rx_enqueue,
     output logic        chip_tx_dequeue
 );
+            // !!! SET DESIRED 'tb_en' and 'stream_mode' HERE !!!
+            logic tb_en, stream_mode;
+            assign tb_en       = 1'b1;
+            assign stream_mode = 1'b0;
+
             logic clk;
             logic rst;
 
@@ -50,14 +55,13 @@ module fpga_top (
 
             //      Synchronized pushbuttons
             logic       gpio_sw_n_sync, cpu_reset_sync;
-            logic [3:0] gpio_dip_sw_sync;
 
             logic       gpio_sw_n_posedge;
 
             //      FPGA control states
             typedef enum logic { 
-                IDLE_F,           // 0
-                STORE_INDEL     // 1
+                IDLE_F,       // 0
+                STORE_CFG     // 1
             } fpga_state_e;
 
             fpga_state_e state, state_next;
@@ -82,12 +86,12 @@ module fpga_top (
         case (state)
             IDLE_F: begin
                 if (gpio_sw_n_posedge)
-                    state_next = STORE_INDEL;
+                    state_next = STORE_CFG;
             end 
-            STORE_INDEL: begin
+            STORE_CFG: begin
                 // if (ctr < 6'd1)
                 // TODO use fifo_rx_full_reg before sending pkt
-                chip_pkt_i_next = mk_indel_pkt({1'b0, gpio_dip_sw_sync});
+                chip_pkt_i_next = mk_reg_pkt({7'd0, stream_mode, tb_en});
                 chip_rx_enqueue_next = 1'b1;
                 state_next = IDLE_F;
             end
@@ -99,11 +103,10 @@ module fpga_top (
         if (rst)
             gpio_led <= '0;
         else begin
-            gpio_led[0] <= chip_reg_o_reg.indel_loaded;
-            gpio_led[1] <= gpio_sw_n_sync;
+            gpio_led[0] <= chip_reg_o_reg.tb_en;
+            gpio_led[1] <= chip_reg_o_reg.stream_mode;
             gpio_led[2] <= chip_power_test_o_reg;
-
-            gpio_led[7:4] <= gpio_dip_sw_sync;
+            gpio_led[3] <= gpio_sw_n_sync;
         end
     end
 
@@ -144,12 +147,6 @@ module fpga_top (
     // ======== Input sanitization of switches + push buttons ========
     sync_debounce sync_n (.clk(clk), .d(gpio_sw_n), .q(gpio_sw_n_sync));
     sync_debounce sync_reset (.clk(clk), .d(cpu_reset), .q(cpu_reset_sync));
-
-    generate
-        for (genvar i = 0; i < 4; i++) begin
-            sync_debounce sync_dip (.clk, .d(gpio_dip_sw[i]), .q(gpio_dip_sw_sync[i]));
-        end
-    endgenerate
 
     posedge_detector sw_n_i (.clk, .d(gpio_sw_n_sync), .q(gpio_sw_n_posedge));
 
