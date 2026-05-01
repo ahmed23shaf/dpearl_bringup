@@ -37,11 +37,23 @@ module ASIC_io_reg(
     );
     
     assign chip_clk = FPGA_clk;
-    assign chip_rst_n = FPGA_rst_n;
     
-    always_ff @(posedge FPGA_clk) begin
+    always_ff @(posedge FPGA_clk) begin       
+        if (!FPGA_rst_n) begin
+        chip_rst_n            <= 1'b0;
+        chip_pkt_i            <= '0;
+        chip_fifo_rx_enqueue  <= 1'b0;
+        chip_fifo_tx_dequeue  <= 1'b0;
+
+        FPGA_fifo_rx_full     <= 1'b0;
+        FPGA_fifo_tx_empty    <= 1'b1;
+        FPGA_pkt_o            <= '0;
+        FPGA_pkt_o_valid      <= 1'b0;
+        FPGA_reg_o            <= '0;
+        FPGA_power_test_o     <= 1'b0;
+    end else begin
         // Register internal signal to chip IO
-        chip_rst_n            <= FPGA_rst_n;
+        chip_rst_n            <= 1'b1;
         chip_pkt_i            <= FPGA_pkt_i;
         chip_fifo_rx_enqueue  <= FPGA_fifo_rx_enqueue;
         chip_fifo_tx_dequeue  <= FPGA_fifo_tx_dequeue;
@@ -52,6 +64,7 @@ module ASIC_io_reg(
         FPGA_pkt_o_valid      <= chip_pkt_o_valid;
         FPGA_reg_o            <= chip_reg_o;
         FPGA_power_test_o     <= chip_power_test_o;
+    end
         
     end
     

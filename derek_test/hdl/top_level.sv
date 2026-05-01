@@ -19,7 +19,7 @@ module top_level (
     output logic        chip_clk,
     output logic        chip_rst_n,
 
-    output io_in_t      chip_pkt_i,
+    output logic [13:0] chip_pkt_i,
     output logic        chip_fifo_rx_enqueue,
     output logic        chip_fifo_tx_dequeue,
 
@@ -27,10 +27,10 @@ module top_level (
     input  logic                chip_fifo_rx_full,
     input  logic                chip_fifo_tx_empty,
 
-    input  io_out_t             chip_pkt_o,        
+    input  logic [12:0]         chip_pkt_o,        
     input  logic                chip_pkt_o_valid,  
     
-    input  ctrl_status_reg_t    chip_reg_o,
+    input  logic [8:0]          chip_reg_o,
     input  logic                chip_power_test_o
 
     
@@ -93,13 +93,14 @@ module top_level (
     );
 
     // Differential --> Single ended clock generator
-    clock_source u_clock (
-        .sysclk_125_clk_n(clk125_n),
-        .sysclk_125_clk_p(clk125_p),
+    clock u_clock (
+        .clk_in1_n(clk125_n),
+        .clk_in1_p(clk125_p),
         .reset(BOARD_reset),
-        .clk_locked(clk_locked),
-        .clk_out_200(clk)
+        .locked(clk_locked),
+        .clk_out1(clk)
     );
+       
     
     // Register the signal from chip 
     ASIC_io_reg u_ASIC_io_reg (
